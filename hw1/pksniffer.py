@@ -2,30 +2,8 @@ import argparse
 import pyshark
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-r')
-    parser.add_argument('filename')
-    parser.add_argument('-host')
-    parser.add_argument('-port')
-    parser.add_argument('-ip')
-    parser.add_argument('-tcp')
-    parser.add_argument('-udp')
-    parser.add_argument('-icmp')
-    parser.add_argument('-net')
-    parser.add_argument('-c', '--count')
-    args = parser.parse_args()
-    print(f'reading: {args.filename}')
-
-    if args.count:
-        file_info = read_file(args.filename, int(args.count))
-    else:
-        file_info = read_file(args.filename)
-
-    print(f'{len(file_info)} packets analyzed')
-    print(file_info[0])
-
-
+'''read pcap file and parse packet info
+    returns array with packet info'''
 def read_file(filename, count=-1):
     capture = pyshark.FileCapture(filename)
     file_info = []
@@ -60,8 +38,12 @@ def read_file(filename, count=-1):
         encap = ''
         if hasattr(packet, 'tcp'):
             encap += 'tcp '
+            src_port = packet.tcp.srcport
+            dest_port = packet.tcp.dstport
         if hasattr(packet, 'udp'):
             encap += 'udp '
+            src_port = packet.udp.srcport
+            dest_port = packet.udp.dstport
         if hasattr(packet, 'icmp'):
             encap += 'icmp '
 
@@ -69,12 +51,51 @@ def read_file(filename, count=-1):
                 'version': version, 'header_len': header_len, 'tos': type_of_service, 'total_len': total_len,
                 'id': id, 'flags': flags, 'frag_offset': frag_offset, 'ttl': time_to_live, 'protocol': protocol,
                 'header_checkum': header_checksum, 'src_ip': src_ip_addr, 'dest_ip': dest_ip_addr,
-                'encapsulated': encap}
+                'encapsulated': encap, 'src_port': src_port, 'dest_port': dest_port}
         file_info.append(info)
 
         counter += 1
     
     return file_info
+
+
+def filter(packet_info, func):
+    filtered_packets = []
+    for packet in packet_info:
+        if func(packet):
+            print(packet)
+            filtered_packets.append(packet)
+    return filtered_packets
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-r')
+    parser.add_argument('filename')
+    parser.add_argument('-host')
+    parser.add_argument('-port')
+    parser.add_argument('-ip')
+    parser.add_argument('-tcp')
+    parser.add_argument('-udp')
+    parser.add_argument('-icmp')
+    parser.add_argument('-net')
+    parser.add_argument('-c', '--count', type=int)
+    args = parser.parse_args()
+    print(f'reading: {args.filename}')
+
+    if args.count:
+        file_info = read_file(args.filename, args.count)
+    else:
+        file_info = read_file(args.filename)
+    print(f'{len(file_info)} packets analyzed')
+
+    if args.host:
+        print(f'filtering on host: {args.host}')
+        filter(file_info, lambda p : p['src_ip'] == args.host or p['dest_ip'] == args.host)
+
+    if args.port:
+        print(f'filtering on port: {args.port}')
+        filter(file_info, lambda p : p['src_port'] == args.port or p['dest_port'] == args.port)
 
 
 main()
