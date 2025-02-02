@@ -4,20 +4,36 @@ import pyshark
 
 def main():
     parser = argparse.ArgumentParser()
-    # parser.add_argument('-r')
+    parser.add_argument('-r')
     parser.add_argument('filename')
-    # parser.add_argument('ip')
-    # parser.add_argument('-c')
-    # parser.add_argument('-net')
+    parser.add_argument('-host')
+    parser.add_argument('-port')
+    parser.add_argument('-ip')
+    parser.add_argument('-tcp')
+    parser.add_argument('-udp')
+    parser.add_argument('-icmp')
+    parser.add_argument('-net')
+    parser.add_argument('-c', '--count')
     args = parser.parse_args()
-    print(args.filename)
-    read_file(args)
+    print(f'reading: {args.filename}')
+
+    if args.count:
+        file_info = read_file(args.filename, int(args.count))
+    else:
+        file_info = read_file(args.filename)
+
+    print(f'{len(file_info)} packets analyzed')
+    print(file_info[0])
 
 
-def read_file(args):
-    capture = pyshark.FileCapture(args.filename)
+def read_file(filename, count=-1):
+    capture = pyshark.FileCapture(filename)
     file_info = []
+    counter = 0
     for packet in capture:
+        if counter == count and count != -1:
+            return file_info
+        
         # ethernet header
         if hasattr(packet, 'eth'):
             size = packet.length
@@ -55,8 +71,10 @@ def read_file(args):
                 'header_checkum': header_checksum, 'src_ip': src_ip_addr, 'dest_ip': dest_ip_addr,
                 'encapsulated': encap}
         file_info.append(info)
+
+        counter += 1
     
-    print(file_info[0])
+    return file_info
 
 
 main()
