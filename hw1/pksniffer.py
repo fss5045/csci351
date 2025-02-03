@@ -60,7 +60,8 @@ def read_file(filename, count=-1):
     
     return file_info
 
-
+'''filters out packets based on input function
+    returns filtered list of packets'''
 def filter(packet_info, func):
     filtered_packets = []
     for packet in packet_info:
