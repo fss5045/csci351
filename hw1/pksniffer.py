@@ -29,12 +29,14 @@ def read_file(filename, count=-1):
             flags = packet.ip.flags
             frag_offset = packet.ip.frag_offset
             time_to_live = packet.ip.ttl
-            protocol = packet.transport_layer
+            protocol = packet.ip.proto
             header_checksum = packet.ip.checksum
             src_ip_addr = packet.ip.src
             dest_ip_addr = packet.ip.dst
         
         # encapsulated packets
+        protocol_type = packet.transport_layer
+
         encap = ''
         if hasattr(packet, 'tcp'):
             encap += 'tcp '
@@ -50,8 +52,8 @@ def read_file(filename, count=-1):
         info = {'size': size, 'dest_mac': dest_mac_addr, 'src_mac': src_mac_addr, 'type': type, 
                 'version': version, 'header_len': header_len, 'tos': type_of_service, 'total_len': total_len,
                 'id': id, 'flags': flags, 'frag_offset': frag_offset, 'ttl': time_to_live, 'protocol': protocol,
-                'header_checkum': header_checksum, 'src_ip': src_ip_addr, 'dest_ip': dest_ip_addr,
-                'encapsulated': encap, 'src_port': src_port, 'dest_port': dest_port}
+                'header_checkum': header_checksum, 'src_ip': src_ip_addr, 'dest_ip': dest_ip_addr, 
+                'protocol_type': protocol_type, 'encapsulated': encap, 'src_port': src_port, 'dest_port': dest_port}
         file_info.append(info)
 
         counter += 1
@@ -74,10 +76,10 @@ def main():
     parser.add_argument('filename')
     parser.add_argument('-host')
     parser.add_argument('-port')
-    parser.add_argument('-ip')
-    parser.add_argument('-tcp')
-    parser.add_argument('-udp')
-    parser.add_argument('-icmp')
+    parser.add_argument('-ip', action='store_true')
+    parser.add_argument('-tcp', action='store_true')
+    parser.add_argument('-udp', action='store_true')
+    parser.add_argument('-icmp', action='store_true')
     parser.add_argument('-net')
     parser.add_argument('-c', '--count', type=int)
     args = parser.parse_args()
@@ -96,6 +98,23 @@ def main():
     if args.port:
         print(f'filtering on port: {args.port}')
         filter(file_info, lambda p : p['src_port'] == args.port or p['dest_port'] == args.port)
+
+    if args.ip:
+        # not sure what this is supposed to do, currently only selects ipv4 packets
+        print(f'filtering on ip')
+        filter(file_info, lambda p : p['version'] == 4)
+    
+    if args.tcp:
+        print(f'filtering on tcp')
+        filter(file_info, lambda p : p['protocol_type'] == 'TCP')
+
+    if args.udp:
+        print(f'filtering on udp')
+        filter(file_info, lambda p : p['protocol_type'] == 'UDP')
+
+    if args.icmp:
+        print(f'filtering on icmp')
+        filter(file_info, lambda p : p['protocol_type'] == 'icmp')
 
 
 main()
