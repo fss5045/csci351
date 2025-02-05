@@ -34,9 +34,9 @@ def read_file(filename, count=-1):
             src_ip_addr = packet.ip.src
             dest_ip_addr = packet.ip.dst
         
-        # encapsulated packets
         protocol_type = packet.transport_layer
 
+        # encapsulated packets
         encap = ''
         if hasattr(packet, 'tcp'):
             encap += 'tcp '
@@ -48,6 +48,7 @@ def read_file(filename, count=-1):
             dest_port = packet.udp.dstport
         if hasattr(packet, 'icmp'):
             encap += 'icmp '
+            protocol_type = 'ICMP'
 
         info = {'size': size, 'dest_mac': dest_mac_addr, 'src_mac': src_mac_addr, 'type': type, 
                 'version': version, 'header_len': header_len, 'tos': type_of_service, 'total_len': total_len,
@@ -84,6 +85,10 @@ def main():
     parser.add_argument('-net')
     parser.add_argument('-c', '--count', type=int)
     args = parser.parse_args()
+
+    if not args.r:
+        print('no file given')
+        return
     print(f'reading: {args.r}')
 
     if args.count:
@@ -95,34 +100,34 @@ def main():
 
     if args.host:
         print(f'filtering on host: {args.host}')
-        packet_info = filter(file_info, lambda p : p['src_ip'] == args.host or p['dest_ip'] == args.host)
+        packet_info = filter(packet_info, lambda p : p['src_ip'] == args.host or p['dest_ip'] == args.host)
 
     if args.port:
         print(f'filtering on port: {args.port}')
-        packet_info =  filter(file_info, lambda p : p['src_port'] == args.port or p['dest_port'] == args.port)
+        packet_info =  filter(packet_info, lambda p : p['src_port'] == args.port or p['dest_port'] == args.port)
 
     if args.ip:
         # not sure exactly what this is supposed to do, currently only selects ipv4 packets
         print(f'filtering on ip')
-        packet_info = filter(file_info, lambda p : p['version'] == 4)
+        packet_info = filter(packet_info, lambda p : p['version'] == '4')
     
     if args.tcp:
         print(f'filtering on tcp')
-        packet_info =  filter(file_info, lambda p : p['protocol_type'] == 'TCP')
+        packet_info =  filter(packet_info, lambda p : p['protocol_type'] == 'TCP')
 
     if args.udp:
         print(f'filtering on udp')
-        packet_info =  filter(file_info, lambda p : p['protocol_type'] == 'UDP')
+        packet_info =  filter(packet_info, lambda p : p['protocol_type'] == 'UDP')
 
     if args.icmp:
         print(f'filtering on icmp')
-        packet_info = filter(file_info, lambda p : p['protocol_type'] == 'icmp')
+        packet_info = filter(packet_info, lambda p : p['protocol_type'] == 'ICMP')
 
     if args.net:
         network = args.net.split('.')
         network = f'{network[0]}.{network[1]}.{network[2]}'
         print(f'filtering on network: {network}')
-        packet_info = filter(file_info, lambda p : p['src_ip'].startswith(network) or p['dest_ip'].startswith(network))
+        packet_info = filter(packet_info, lambda p : p['src_ip'].startswith(network) or p['dest_ip'].startswith(network))
 
     print('packets:')
     for packet in packet_info:
