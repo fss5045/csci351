@@ -1,10 +1,16 @@
+"""
+packet analyzer script, with multiple possible filters
+"""
 import argparse
 import pyshark
 
 
-'''read pcap file and parse packet info
-    returns array with packet info'''
+
 def read_file(filename, count=-1):
+    """read pcap file and parse packet info
+    filename: name of pcap file
+    count: number of packets to read, default is whole file
+    returns array with packet info"""
     capture = pyshark.FileCapture(filename)
     file_info = []
     counter = 0
@@ -61,9 +67,12 @@ def read_file(filename, count=-1):
     
     return file_info
 
-'''filters out packets based on input function
-    returns filtered list of packets'''
+
 def filter(packet_info, func):
+    """filters out packets based on input function
+    packet_info: list of packets to filter
+    func: function to filter on
+    returns filtered list of packets"""
     filtered_packets = []
     for packet in packet_info:
         if func(packet):
@@ -73,6 +82,7 @@ def filter(packet_info, func):
 
 
 def main():
+    """main function that parses arguments and runs other functions"""
     parser = argparse.ArgumentParser()
     parser.add_argument('-r')
     # parser.add_argument('filename')
@@ -133,4 +143,5 @@ def main():
     for packet in packet_info:
         print(packet)
 
-main()
+if __name__ == '__main__':
+    main()
