@@ -45,7 +45,7 @@ def main():
             if args.count and packet_count < args.count:
                 return 1
             break
-        if packet_count > args.count:
+        if packet_count >= args.count:
             break
         out = send_packet(args.packetsize, args.count, args.dest)
         print(out)
