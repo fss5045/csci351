@@ -1,13 +1,19 @@
+"""traceroute implementation"""
 import argparse
 import time
-import subprocess
-import platform
 import socket
-import struct
 import scapy.all as scapy
 
 
 def trace(n, nqueries, summary, dest, timeout=5, max_hops=30):
+    """
+    n: flag to print addresses numerically only
+    nqueries: number of probes to send per ttl
+    summary: flag to print number of unanswered probes for each hop
+    dest: packet destination
+    timeout: response timeout for each packet
+    max_hops: max # of hops before exiting
+    returns: Trace completed if successful, otherwise Max hops exceeded"""
     dest_ip = socket.gethostbyname(dest)
     icmp_type = 0 # 0 when using icmp, 3 when using udp
 
@@ -54,6 +60,7 @@ def trace(n, nqueries, summary, dest, timeout=5, max_hops=30):
 
 
 def main():
+    """main function that parses arguments and runs other functions"""
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', action='store_true')
     parser.add_argument('-q', '--nqueries', type=int, default=3)
