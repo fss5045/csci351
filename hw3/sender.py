@@ -14,67 +14,82 @@ lock = Lock()
 windowsize = 3
 timeout = 5
 wait = 5
-max_pkt_size = 5
-seq = 0
-next_seq = windowsize
+base = 0
+next_seq = 0
 packets = []
-sent_packets = []
+acked_packets = {}
+timestamp = {}
 
 
 def wait_for_ack():
-    while 1:
-        lock.acquire()
-        pkt = s.recvfrom(max_pkt_size)
-        info = pkt.decode().split('/')
-        if info[-2] == 1 and info[-3] == next_seq:
-            seq += 1
-            next_seq += 1
-            lock.release()
+    global base
+    while len(acked_packets) < len(packets):
+        # print('waiting for ack')
+        try:
+            pkt, _ = s.recvfrom(rdt.max_pkt_size + 25)
+            src, dst, length, chksum, seq, ack, data = pkt.decode().split('/')
+            print(f'got packet {seq}: {ack}')
+            if int(ack) == 1:
+                with lock:
+                    if int(seq) >= base:
+                        acked_packets[int(seq)] = True
+                        while base in acked_packets and acked_packets[base]:
+                            base += 1
+        except:
+            break
             
-
 parser = argparse.ArgumentParser()
 parser.add_argument('-d')
-parser.add_argument('-s', type=int, default=max_pkt_size)
+parser.add_argument('-f')
+parser.add_argument('-s', type=int, default=rdt.max_pkt_size)
 args = parser.parse_args()
 
+# check args
 if args.d:
     data = args.d
 else:
     data = 'default_packet_data'
-if args.s > max_pkt_size:
-    print(f'packet size must be below {max_pkt_size}')
-    args.s = max_pkt_size
+if args.f:
+    # read in file
+    data = ''
 
+if args.s > rdt.max_pkt_size:
+    print(f'packet size must be below {rdt.max_pkt_size}')
+    args.s = rdt.max_pkt_size
 
 # create packets from data
-run = True
-while run:
-    if len(data) > args.s:
-        pkt_data = data[:args.s]
-        data = data[args.s:]
-    else:
-        pkt_data = data
-        run = False
-
-    pkt = rdt.create_pkt(send_port, rcv_port, seq, 0, pkt_data)
+while data:
+    pkt_data = data[:args.s]
+    data = data[args.s:]
+    pkt = rdt.create_pkt(send_port, rcv_port, next_seq, 0, pkt_data)
     packets.append(pkt)
+    next_seq += 1
 
-wt = Thread(target=wait_for_ack)
+wt = Thread(target=wait_for_ack, daemon=True)
 wt.start()
 
-while 1:
-    # start_time = time.time()
-    # send packets in the window
-    print(seq, next_seq)
-    if next_seq == len(packets):
-        break
-    windowpkts = packets[seq:next_seq]
-    for pkt in windowpkts:
-        # s.sendto(pkt, rcv_addr)
-        sent_packets.append(pkt)
-        time.sleep(wait)
-        print(sent_packets)
-        seq += 1
-        next_seq += 1
+next_seq = 0
+while base < len(packets):
+    # send packets in window
+    print(base, next_seq)
+    with lock:
+       while next_seq < (base + windowsize) and next_seq < len(packets):
+           print(f'sending packet {next_seq}')
+           s.sendto(packets[next_seq], rcv_addr)
+           timestamp[next_seq] = time.time()
+           next_seq += 1
+    
+    # check acks
+    with lock:
+        curr_time = time.time()
+        for i in range(base, min(base + windowsize, len(packets))):
+            # print(curr_time - timestamp.get(i, 0))
+            if i not in acked_packets and (curr_time - timestamp.get(i, 0)) > timeout:
+                print(f'resending packet {i}')
+                s.sendto(packets[i], rcv_addr)
+    
+    time.sleep(wait)
+
+print('all packets sent and acked')
 
 wt.join()
