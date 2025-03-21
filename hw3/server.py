@@ -25,7 +25,7 @@ def write_to_file(name, data):
 
     """
     print('writing to file')
-    with open(f'{name}.txt', 'a') as file:
+    with open(f'{name}.txt', 'w') as file:
         for d in data:
             file.write(d)
 

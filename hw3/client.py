@@ -7,7 +7,6 @@ import socket
 import random
 from threading import *
 import rdt
-import sender
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

@@ -50,9 +50,9 @@ def main():
     main function that arg parses, splits the data into packets, 
     and then sends the packets through a defined port to the netwrork
     """
+    global next_seq
     parser = argparse.ArgumentParser()
     parser.add_argument('-d')
-    parser.add_argument('-f')
     parser.add_argument('-s', type=int, default=rdt.max_pkt_size)
     args = parser.parse_args()
 
@@ -61,9 +61,6 @@ def main():
         data = args.d
     else:
         data = 'default_packet_data'
-    if args.f:
-        # read in file
-        data = ''
 
     if args.s > rdt.max_pkt_size:
         print(f'packet size must be below {rdt.max_pkt_size}')

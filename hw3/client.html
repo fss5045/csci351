@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module client</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">client</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cfinn%5Ccsci351%5Chw3%5Cclient.py">c:\users\finn\csci351\hw3\client.py</a></td></tr></table>
+    <p><span class="code">module&nbsp;that&nbsp;sends&nbsp;a&nbsp;file&nbsp;to&nbsp;a&nbsp;server</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="argparse.html">argparse</a><br>
+<a href="random.html">random</a><br>
+</td><td class="multicolumn"><a href="rdt.html">rdt</a><br>
+<a href="socket.html">socket</a><br>
+</td><td class="multicolumn"><a href="time.html">time</a><br>
+</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-Lock"><strong>Lock</strong></a> = allocate_lock(...)</dt><dd><span class="code">allocate_lock()&nbsp;-&gt;&nbsp;lock&nbsp;object<br>
+(allocate()&nbsp;is&nbsp;an&nbsp;obsolete&nbsp;synonym)<br>
+&nbsp;<br>
+Create&nbsp;a&nbsp;new&nbsp;lock&nbsp;object.&nbsp;See&nbsp;help(type(threading.<a href="#-Lock">Lock</a>()))&nbsp;for<br>
+information&nbsp;about&nbsp;locks.</span></dd></dl>
+ <dl><dt><a name="-excepthook"><strong>excepthook</strong></a> = _excepthook(...)</dt><dd><span class="code"><a href="#-excepthook">excepthook</a>(exc_type,&nbsp;exc_value,&nbsp;exc_traceback,&nbsp;thread)<br>
+&nbsp;<br>
+Handle&nbsp;uncaught&nbsp;Thread.run()&nbsp;exception.</span></dd></dl>
+ <dl><dt><a name="-get_ident"><strong>get_ident</strong></a>(...)</dt><dd><span class="code"><a href="#-get_ident">get_ident</a>()&nbsp;-&gt;&nbsp;integer<br>
+&nbsp;<br>
+Return&nbsp;a&nbsp;non-zero&nbsp;integer&nbsp;that&nbsp;uniquely&nbsp;identifies&nbsp;the&nbsp;current&nbsp;thread<br>
+amongst&nbsp;other&nbsp;threads&nbsp;that&nbsp;exist&nbsp;simultaneously.<br>
+This&nbsp;may&nbsp;be&nbsp;used&nbsp;to&nbsp;identify&nbsp;per-thread&nbsp;resources.<br>
+Even&nbsp;though&nbsp;on&nbsp;some&nbsp;platforms&nbsp;threads&nbsp;identities&nbsp;may&nbsp;appear&nbsp;to&nbsp;be<br>
+allocated&nbsp;consecutive&nbsp;numbers&nbsp;starting&nbsp;at&nbsp;1,&nbsp;this&nbsp;behavior&nbsp;should&nbsp;not<br>
+be&nbsp;relied&nbsp;upon,&nbsp;and&nbsp;the&nbsp;number&nbsp;should&nbsp;be&nbsp;seen&nbsp;purely&nbsp;as&nbsp;a&nbsp;magic&nbsp;cookie.<br>
+A&nbsp;thread's&nbsp;identity&nbsp;may&nbsp;be&nbsp;reused&nbsp;for&nbsp;another&nbsp;thread&nbsp;after&nbsp;it&nbsp;exits.</span></dd></dl>
+ <dl><dt><a name="-get_native_id"><strong>get_native_id</strong></a>(...)</dt><dd><span class="code"><a href="#-get_native_id">get_native_id</a>()&nbsp;-&gt;&nbsp;integer<br>
+&nbsp;<br>
+Return&nbsp;a&nbsp;non-negative&nbsp;integer&nbsp;identifying&nbsp;the&nbsp;thread&nbsp;as&nbsp;reported<br>
+by&nbsp;the&nbsp;OS&nbsp;(kernel).&nbsp;This&nbsp;may&nbsp;be&nbsp;used&nbsp;to&nbsp;uniquely&nbsp;identify&nbsp;a<br>
+particular&nbsp;thread&nbsp;within&nbsp;a&nbsp;system.</span></dd></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>()</dt><dd><span class="code">main&nbsp;function&nbsp;that&nbsp;parses&nbsp;file&nbsp;argumnet&nbsp;and&nbsp;sends&nbsp;the&nbsp;file&nbsp;packets&nbsp;to&nbsp;the&nbsp;server</span></dd></dl>
+ <dl><dt><a name="-read_flle"><strong>read_flle</strong></a>(path)</dt><dd><span class="code">reads&nbsp;in&nbsp;a&nbsp;file&nbsp;and&nbsp;splits&nbsp;it&nbsp;into&nbsp;packets<br>
+path:&nbsp;filepath&nbsp;to&nbsp;read&nbsp;in</span></dd></dl>
+ <dl><dt><a name="-stack_size"><strong>stack_size</strong></a>(...)</dt><dd><span class="code"><a href="#-stack_size">stack_size</a>([size])&nbsp;-&gt;&nbsp;size<br>
+&nbsp;<br>
+Return&nbsp;the&nbsp;thread&nbsp;stack&nbsp;size&nbsp;used&nbsp;when&nbsp;creating&nbsp;new&nbsp;threads.&nbsp;&nbsp;The<br>
+optional&nbsp;size&nbsp;argument&nbsp;specifies&nbsp;the&nbsp;stack&nbsp;size&nbsp;(in&nbsp;bytes)&nbsp;to&nbsp;be&nbsp;used<br>
+for&nbsp;subsequently&nbsp;created&nbsp;threads,&nbsp;and&nbsp;must&nbsp;be&nbsp;0&nbsp;(use&nbsp;platform&nbsp;or<br>
+configured&nbsp;default)&nbsp;or&nbsp;a&nbsp;positive&nbsp;integer&nbsp;value&nbsp;of&nbsp;at&nbsp;least&nbsp;32,768&nbsp;(32k).<br>
+If&nbsp;changing&nbsp;the&nbsp;thread&nbsp;stack&nbsp;size&nbsp;is&nbsp;unsupported,&nbsp;a&nbsp;ThreadError<br>
+exception&nbsp;is&nbsp;raised.&nbsp;&nbsp;If&nbsp;the&nbsp;specified&nbsp;size&nbsp;is&nbsp;invalid,&nbsp;a&nbsp;ValueError<br>
+exception&nbsp;is&nbsp;raised,&nbsp;and&nbsp;the&nbsp;stack&nbsp;size&nbsp;is&nbsp;unmodified.&nbsp;&nbsp;32k&nbsp;bytes<br>
+&nbsp;currently&nbsp;the&nbsp;minimum&nbsp;supported&nbsp;stack&nbsp;size&nbsp;value&nbsp;to&nbsp;guarantee<br>
+sufficient&nbsp;stack&nbsp;space&nbsp;for&nbsp;the&nbsp;interpreter&nbsp;itself.<br>
+&nbsp;<br>
+Note&nbsp;that&nbsp;some&nbsp;platforms&nbsp;may&nbsp;have&nbsp;particular&nbsp;restrictions&nbsp;on&nbsp;values&nbsp;for<br>
+the&nbsp;stack&nbsp;size,&nbsp;such&nbsp;as&nbsp;requiring&nbsp;a&nbsp;minimum&nbsp;stack&nbsp;size&nbsp;larger&nbsp;than&nbsp;32&nbsp;KiB&nbsp;or<br>
+requiring&nbsp;allocation&nbsp;in&nbsp;multiples&nbsp;of&nbsp;the&nbsp;system&nbsp;memory&nbsp;page&nbsp;size<br>
+-&nbsp;platform&nbsp;documentation&nbsp;should&nbsp;be&nbsp;referred&nbsp;to&nbsp;for&nbsp;more&nbsp;information<br>
+(4&nbsp;KiB&nbsp;pages&nbsp;are&nbsp;common;&nbsp;using&nbsp;multiples&nbsp;of&nbsp;4096&nbsp;for&nbsp;the&nbsp;stack&nbsp;size&nbsp;is<br>
+the&nbsp;suggested&nbsp;approach&nbsp;in&nbsp;the&nbsp;absence&nbsp;of&nbsp;more&nbsp;specific&nbsp;information).</span></dd></dl>
+ <dl><dt><a name="-wait_for_ack"><strong>wait_for_ack</strong></a>()</dt><dd><span class="code">runs&nbsp;on&nbsp;a&nbsp;separate&nbsp;thread&nbsp;and&nbsp;listens&nbsp;for&nbsp;ack&nbsp;response&nbsp;packets,<br>
+increases&nbsp;the&nbsp;base&nbsp;of&nbsp;the&nbsp;window&nbsp;for&nbsp;sending&nbsp;packets</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>TIMEOUT_MAX</strong> = 4294967.0<br>
+<strong>acked_packets</strong> = {}<br>
+<strong>base</strong> = 0<br>
+<strong>client_port</strong> = 8050<br>
+<strong>lock</strong> = &lt;unlocked _thread.lock object&gt;<br>
+<strong>next_seq</strong> = 0<br>
+<strong>packets</strong> = []<br>
+<strong>s</strong> = &lt;socket.socket fd=412, family=2, type=2, proto=0, laddr=('127.0.0.1', 8050)&gt;<br>
+<strong>server_addr</strong> = ('127.0.0.1', 8000)<br>
+<strong>server_port</strong> = 8000<br>
+<strong>timeout</strong> = 5<br>
+<strong>timestamp</strong> = {}<br>
+<strong>wait</strong> = 5<br>
+<strong>windowsize</strong> = 3</td></tr></table>
+</body></html>
