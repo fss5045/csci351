@@ -1,8 +1,6 @@
-import argparse
 import time
 import socket
 import random
-import scapy.all as scapy
 import rdt
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

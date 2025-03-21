@@ -1,32 +1,47 @@
-import argparse
 import time
 import socket
+import random
 import rdt
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-send_port = 9000
-net_port = 9050
-rcv_port = 9090
-s.bind(('127.0.0.1', rcv_port))
-net_addr = ('127.0.0.1', net_port)
+server_port = 8000
+client_port = 8050
+s.bind(('127.0.0.1', server_port))
+client_addr = ('127.0.0.1', client_port)
 excepted_seq = 0
 buffer = {}
 rcvd_packets =[]
 
 
+def write_to_file(name, data):
+    print('writing to file')
+    with open(f'{name}.txt', 'a') as file:
+        for d in data:
+            file.write(d)
+
+
 def main():
-    global excepted_seq
+    global excepted_seq, rcvd_packets, buffer
     while 1:
         pkt, _ = s.recvfrom(rdt.max_pkt_size + 30)
         src, dst, length, chksum, seq, ack, data = pkt.decode().split('/')
-        # print(data)
+        print(data)
+        if data == "EOF":
+            write_to_file('server_file.txt', rcvd_packets)
+            excepted_seq = 0
+            buffer = {}
+            rcvd_packets = []
+            ack = rdt.create_pkt(server_port, client_port, seq, 1, '')
+            s.sendto(ack, client_addr)
+            print(f'sent ack {seq}')
+            continue
         
         if rdt.checksum(data) != int(chksum):
             print(f'checksum incorrect for packet {seq}')
             continue
         else:
-            rcvd_packets.append(pkt)
+            rcvd_packets.append(data)
 
         # correct seq
         if int(seq) == excepted_seq:
@@ -46,14 +61,14 @@ def main():
 
         # behind expected, send ack
         else:
-            ack = rdt.create_pkt(rcv_port, net_port, seq, 1, '')
-            s.sendto(ack, net_addr)
+            ack = rdt.create_pkt(server_port, client_port, seq, 1, '')
+            s.sendto(ack, client_addr)
             print(f'sent ack {seq}')
         
         # send cum ack to last packet received
         ack_num = max(0, excepted_seq - 1)
-        ack = rdt.create_pkt(rcv_port, net_port, ack_num, 1, '')
-        s.sendto(ack, net_addr)
+        ack = rdt.create_pkt(server_port, client_port, ack_num, 1, '')
+        s.sendto(ack, client_addr)
         print(f'sent ack {ack_num}')
 
 

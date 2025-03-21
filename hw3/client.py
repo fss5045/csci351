@@ -1,14 +1,17 @@
 import argparse
 import time
 import socket
+import random
 from threading import *
 import rdt
+import sender
+
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-send_port = 9000
-rcv_port = 9050
-s.bind(('127.0.0.1', send_port))
-rcv_addr = ('127.0.0.1', rcv_port)
+server_port = 8000
+client_port = 8050
+s.bind(('127.0.0.1', client_port))
+server_addr = ('127.0.0.1', server_port)
 lock = Lock()
 windowsize = 3
 timeout = 5
@@ -18,6 +21,20 @@ next_seq = 0
 packets = []
 acked_packets = {}
 timestamp = {}
+
+
+def read_flle(path):
+    global next_seq
+    with open(path, 'r') as file:
+        data = file.read()
+    
+    data += "EOF"
+    while data:
+        pkt_data = data[:rdt.max_pkt_size]
+        data = data[rdt.max_pkt_size:]
+        pkt = rdt.create_pkt(client_port, server_port, next_seq, 0, pkt_data)
+        packets.append(pkt)
+        next_seq += 1
 
 
 def wait_for_ack():
@@ -36,35 +53,13 @@ def wait_for_ack():
                             base += 1
         except:
             break
-            
+
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d')
-    parser.add_argument('-f')
-    parser.add_argument('-s', type=int, default=rdt.max_pkt_size)
-    args = parser.parse_args()
-
-    # check args
-    if args.d:
-        data = args.d
-    else:
-        data = 'default_packet_data'
-    if args.f:
-        # read in file
-        data = ''
-
-    if args.s > rdt.max_pkt_size:
-        print(f'packet size must be below {rdt.max_pkt_size}')
-        args.s = rdt.max_pkt_size
-
-    # create packets from data
-    while data:
-        pkt_data = data[:args.s]
-        data = data[args.s:]
-        pkt = rdt.create_pkt(send_port, rcv_port, next_seq, 0, pkt_data)
-        packets.append(pkt)
-        next_seq += 1
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('file')
+    # args = parser.parse_args()
+    read_flle('file.txt')
 
     wt = Thread(target=wait_for_ack, daemon=True)
     wt.start()
@@ -76,7 +71,7 @@ def main():
         with lock:
             while next_seq < (base + windowsize) and next_seq < len(packets):
                 print(f'sending packet {next_seq}')
-                s.sendto(packets[next_seq], rcv_addr)
+                s.sendto(packets[next_seq], server_addr)
                 timestamp[next_seq] = time.time()
                 next_seq += 1
         
@@ -87,7 +82,7 @@ def main():
                 # print(curr_time - timestamp.get(i, 0))
                 if i not in acked_packets and (curr_time - timestamp.get(i, 0)) > timeout:
                     print(f'resending packet {i}')
-                    s.sendto(packets[i], rcv_addr)
+                    s.sendto(packets[i], server_addr)
         
         time.sleep(wait)
 
