@@ -1,3 +1,6 @@
+"""
+module that sends a file to a server
+"""
 import argparse
 import time
 import socket
@@ -24,6 +27,10 @@ timestamp = {}
 
 
 def read_flle(path):
+    """
+    reads in a file and splits it into packets
+    path: filepath to read in
+    """
     global next_seq
     with open(path, 'r') as file:
         data = file.read()
@@ -38,6 +45,10 @@ def read_flle(path):
 
 
 def wait_for_ack():
+    """
+    runs on a separate thread and listens for ack response packets,
+    increases the base of the window for sending packets
+    """
     global base
     while len(acked_packets) < len(packets):
         # print('waiting for ack')
@@ -56,10 +67,13 @@ def wait_for_ack():
 
 
 def main():
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('file')
-    # args = parser.parse_args()
-    read_flle('file.txt')
+    """
+    main function that parses file argumnet and sends the file packets to the server
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('file')
+    args = parser.parse_args()
+    read_flle(args.file)
 
     wt = Thread(target=wait_for_ack, daemon=True)
     wt.start()

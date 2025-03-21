@@ -1,3 +1,6 @@
+"""
+module that sends packets with data
+"""
 import argparse
 import time
 import socket
@@ -21,6 +24,10 @@ timestamp = {}
 
 
 def wait_for_ack():
+    """
+    runs on a separate thread and listens for ack response packets,
+    increases the base of the window for sending packets
+    """
     global base
     while len(acked_packets) < len(packets):
         # print('waiting for ack')
@@ -39,6 +46,10 @@ def wait_for_ack():
             
 
 def main():
+    """
+    main function that arg parses, splits the data into packets, 
+    and then sends the packets through a defined port to the netwrork
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('-d')
     parser.add_argument('-f')

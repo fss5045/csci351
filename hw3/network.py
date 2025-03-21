@@ -1,3 +1,7 @@
+"""
+module that acts as the network between sender and receiver,
+can drop or corrupt packets (20% chance of each)
+"""
 import time
 import socket
 import random
@@ -12,6 +16,10 @@ excepted_seq = 0
 
 
 def drop():
+    """
+    determines if a packet should be dropped
+    returns: True if packet should be dropped, False otherwise
+    """
     drop_p = random.random()
     if drop_p < 0.2:
         return True
@@ -19,6 +27,11 @@ def drop():
 
 
 def corrupt(pkt):
+    """
+    determines if a packet should be corrupted
+    pkt: packet to possibly corrupt
+    returns: corrupted packet if packet should be corrupted, False otherwise
+    """
     corrupt_p = random.random()
     if corrupt_p < 0.2:
         info = pkt.decode().split('/')
@@ -28,6 +41,10 @@ def corrupt(pkt):
 
 
 def main():
+    """
+    main function that listens for packets from both sender and receiver,
+    and forwards to the destination if the packet isn't dropped
+    """
     while 1:
         pkt, _ = s.recvfrom(rdt.max_pkt_size + 25)
         src, dst, length, chksum, seq, ack, data = pkt.decode().split('/')

@@ -1,3 +1,6 @@
+"""
+module that listens for file packets and writes to a file
+"""
 import time
 import socket
 import random
@@ -15,6 +18,12 @@ rcvd_packets =[]
 
 
 def write_to_file(name, data):
+    """
+    writes some data to file
+    name: file to write to
+    data: data to write in file
+
+    """
     print('writing to file')
     with open(f'{name}.txt', 'a') as file:
         for d in data:
@@ -22,13 +31,16 @@ def write_to_file(name, data):
 
 
 def main():
+    """
+    main function that listens for file packets and sends acks
+    """
     global excepted_seq, rcvd_packets, buffer
     while 1:
         pkt, _ = s.recvfrom(rdt.max_pkt_size + 30)
         src, dst, length, chksum, seq, ack, data = pkt.decode().split('/')
         print(data)
         if data == "EOF":
-            write_to_file('server_file.txt', rcvd_packets)
+            write_to_file('server_file', rcvd_packets)
             excepted_seq = 0
             buffer = {}
             rcvd_packets = []

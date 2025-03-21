@@ -1,3 +1,6 @@
+"""
+module that receivers packets and sends acks to the sender
+"""
 import argparse
 import time
 import socket
@@ -16,6 +19,9 @@ rcvd_packets =[]
 
 
 def main():
+    """
+    main function that listens for packets from the network, and sends back acks
+    """
     global excepted_seq
     while 1:
         pkt, _ = s.recvfrom(rdt.max_pkt_size + 30)
