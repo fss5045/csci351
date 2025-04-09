@@ -23,9 +23,9 @@ def discover_peer():
 
 
 def main():
+    generate_metainfo('spiderman', 64)
     # discover_thread = Thread(target=discover_peer, daemon=True)
     # discover_thread.start()
-    generate_metainfo('spiderman', 64)
 
 
 if __name__ == '__main__':
