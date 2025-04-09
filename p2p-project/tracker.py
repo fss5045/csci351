@@ -19,13 +19,15 @@ def generate_metainfo(name, file_len):
         file.write(f'{{url: {{name: {name}, piece_length: {p_len}, pieces: {pieces}, length: {file_len}}}}}')
 
 def discover_peer():
-    pkt, _ = s.recvfrom()
+    while 1:
+        pkt, _ = s.recvfrom()
+        port, received, = pkt.decode()
 
 
 def main():
     generate_metainfo('spiderman', 64)
-    # discover_thread = Thread(target=discover_peer, daemon=True)
-    # discover_thread.start()
+    discover_thread = Thread(target=discover_peer, daemon=True)
+    discover_thread.start()
 
 
 if __name__ == '__main__':
