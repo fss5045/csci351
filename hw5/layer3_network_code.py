@@ -1,6 +1,6 @@
+"""Simulating a network with 3 subnets"""
 from mininet.net import Mininet
 from mininet.topo import Topo
-from mininet.log import setLogLevel, info
 from mininet.cli import CLI
 from mininet.node import OVSKernelSwitch, Controller
 import ipaddress
@@ -8,6 +8,9 @@ import ipaddress
 
 class Layer3Topo( Topo ):
     def build( self ):
+        """
+        build the topography of the network
+        """
         #routers for each LAN
         sA = self.addSwitch('sA', dpid="0000000000000001")   # for LAN A
         sB = self.addSwitch('sB', dpid="0000000000000002")   # for LAN B
@@ -42,7 +45,9 @@ class Layer3Topo( Topo ):
 
 
 def runTest():
-    setLogLevel('info')
+    """
+    run connectivity tests on the hots
+    """
     topo = Layer3Topo()
     net = Mininet(topo=topo, controller=Controller, switch=OVSKernelSwitch)
     net.start()
@@ -66,21 +71,29 @@ def runTest():
     net.stop()
 
 
-def get_network(ip, mask):
-    #ip_parts = list(map(int, ip.split('.')))
-    #mask_parts = list(map(int, mask.split('.')))
-    #network = [ip_parts[i] & mask_parts[i] for i in range(4)]
-    #return '.'.join(map(str, network))
+# never ened up using
+# def get_network(ip, mask):
+#     #ip_parts = list(map(int, ip.split('.')))
+#     #mask_parts = list(map(int, mask.split('.')))
+#     #network = [ip_parts[i] & mask_parts[i] for i in range(4)]
+#     #return '.'.join(map(str, network))
 
-    return str(ipaddress.ip_network(f'{ip}/{mask}', strict=False).network_address)
+#     return str(ipaddress.ip_network(f'{ip}/{mask}', strict=False).network_address)
 
 
 def cidr_to_mask(cidr):
+    """
+    converts cidr form into mask form
+    cidr: the cidr number of bits to mask
+    returns: the subnet mask in 255.255.255.X form
+    """
     return str(ipaddress.IPv4Network(f'0.0.0.0/{cidr}', strict=False).netmask)
 
 
 def task3():
-    setLogLevel('info')
+    """
+    setup the topography as instructed in task 3
+    """
     topo = Layer3Topo()
     net = Mininet(topo=topo, controller=Controller, switch=OVSKernelSwitch)  
     net.start()

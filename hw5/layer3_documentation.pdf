@@ -1,0 +1,20 @@
+Module: layer3_network_code
+
+Functions:
+    -build( self ):
+        build the topography of the network
+    
+    -runTest():
+        run connectivity tests on the hots
+
+    -cidr_to_mask(cidr):
+        converts cidr form into mask form
+        cidr: the cidr number of bits to mask
+        returns: the subnet mask in 255.255.255.X form
+
+    -task3():
+        setup the topography as instructed in task 3
+
+
+I couldn't generate documentation because the mininet modules need 
+modules that don'task exist for Windows.
